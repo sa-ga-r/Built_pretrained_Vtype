@@ -1,14 +1,10 @@
 import torch
 import torch.nn
 import torchaudio
-import IPython
 import streamlit as st
 import torchaudio.pipelines
-from torchaudio.utils import download_asset
 
-torch.random.manual_seed(0)
-
-class CTCDecoder(torch.nn.Module):
+class CTCDecoder(nn.Module):
     def __init__(self, uploaded_file, blank=0):
         super().__init__()
         self.uploaded_file = uploaded_file
@@ -26,7 +22,7 @@ class CTCDecoder(torch.nn.Module):
             self.features, _ = self.model.extract_features(self.waveform)
             self.final_emission, _ = self.model(self.waveform)
 
-    def forward(self) -> str:
+    def forward(self):
         idx = torch.argmax(self.final_emission[0], dim=-1)
         idx = torch.unique_consecutive(idx, dim=-1)
         idx = [i for i in idx if i != self.blank]
